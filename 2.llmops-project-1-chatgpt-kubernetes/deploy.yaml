@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatgpt-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chatgpt-pod
+  template:
+    metadata:
+      labels:
+        app: chatgpt-pod
+    spec:
+      containers:
+      - name: mychatgptcontainer
+        image: manifoldailearning/chatgpt-project:v1 
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+        env:
+        - name: OPENAI_API
+          valueFrom:
+            secretKeyRef:
+              name: openai-secret
+              key: API_KEY
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysvc-v2
+spec:
+  type: NodePort
+  selector:
+    app: chatgpt-pod
+  ports:
+  - port: 5000 # Service IP Port
+    targetPort: 80 # Container Port
+    nodePort: 30002 # Node Port/Host Port
+    protocol: TCP

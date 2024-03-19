@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysvc
+spec:
+  type: NodePort
+  selector:
+    name: myapp
+    environment: prod
+  ports:
+  - port: 5000 # Service IP Port
+    targetPort: 80 # Container Port
+    nodePort: 30001 # Node Port/Host Port
+    protocol: TCP
