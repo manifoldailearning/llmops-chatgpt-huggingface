@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: chatgpt-deploy
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: chatgpt-pod
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: mychatgptcontainer
-        image: manifoldailearning/chatgpt-project:v3 
+        image: gcr.io/PROJECT_ID/IMAGE:TAG
         ports:
         - containerPort: 80
         env:
