@@ -75,3 +75,8 @@ Now that you have Google Cloud CLI set up, you can create a Kubernetes cluster u
     You should see the nodes of your Kubernetes cluster listed.
 
 Congratulations! You have successfully created a Google Cloud account, set up Google Cloud CLI, and created a Kubernetes cluster using Google Kubernetes Engine (GKE). You can now deploy and manage your applications on Kubernetes.
+
+# Delete Steps
+
+
+    gcloud container clusters delete my-cluster --zone=us-central1-a
