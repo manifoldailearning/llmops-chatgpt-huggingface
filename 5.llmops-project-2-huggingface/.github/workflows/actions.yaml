@@ -9,8 +9,8 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: my-cluster  # Add your cluster name here.
   GKE_ZONE: us-central1-a  # Add your cluster zone here.
-  DEPLOYMENT_NAME: chatgpt-deploy # Add your deployment name here.
-  IMAGE: chatgpt # Image Name
+  DEPLOYMENT_NAME: gpt-deploy # Add your deployment name here.
+  IMAGE: gpthuggingface # Image Name
 
 jobs:
   setup-build-publish-deploy:
@@ -59,7 +59,6 @@ jobs:
       run: |-
         curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
         chmod u+x ./kustomize
-        kubectl create secret generic openai-secret --from-literal=API_KEY=${{secrets.OPENAI_API}} || true
 
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
