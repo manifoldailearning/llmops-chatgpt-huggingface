@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpt-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: gpt-pod
+  template:
+    metadata:
+      labels:
+        app: gpt-pod
+    spec:
+      containers:
+      - name: gptcontainer
+        image: gcr.io/PROJECT_ID/IMAGE:TAG
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mylb
+spec:
+  type: LoadBalancer
+  selector:
+    app: gpt-pod
+  ports:
+  - port: 80 # Service IP Port
+    targetPort: 80 # Container Port
