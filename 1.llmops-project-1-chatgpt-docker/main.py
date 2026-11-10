@@ -3,9 +3,11 @@ from openai import OpenAI
 import config
 from pydantic import BaseModel
 import uvicorn
+import time
 
 assistant_id = config.assistant_id
-api_key = config.api_key
+# An empty string would override the SDK's own env lookup, so pass None instead.
+api_key = config.api_key or None
 
 client = OpenAI(api_key=api_key)
 
@@ -43,14 +45,19 @@ def generate(body: Body):
         assistant_id=assistant_id
     )
 
-    while True:
-        run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
-        if run.status == "completed":
-            messages = client.beta.threads.messages.list(thread_id=thread.id)
-            latest_message = messages.data[0]
-            text = latest_message.content[0].text.value
-            break;
-    return text   
+    # Stop on failure as well as success. The old loop never exited when a run failed.
+    terminal_states = {"completed", "failed", "cancelled", "expired", "incomplete"}
+    while run.status not in terminal_states:
+        time.sleep(0.5)
+        run = client.beta.threads.runs.retrieve(run_id=run.id, thread_id=thread.id)
+
+    if run.status != "completed":
+        detail = run.last_error.message if run.last_error else None
+        return {"error": run.status, "detail": detail}
+
+    messages = client.beta.threads.messages.list(thread_id=thread.id)
+    text = messages.data[0].content[0].text.value
+    return {"response": text}   
 
 if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0",port=80)
