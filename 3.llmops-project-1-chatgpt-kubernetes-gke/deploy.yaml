@@ -23,6 +23,12 @@ spec:
             secretKeyRef:
               name: openai-secret
               key: API_KEY
+        - name: OPENAI_VECTOR_STORE_ID
+          valueFrom:
+            secretKeyRef:
+              name: openai-secret
+              key: VECTOR_STORE_ID
+              optional: true
 
 
 ---
